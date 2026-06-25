@@ -177,13 +177,163 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 
 /* ── EMPTY STATE ── */
 .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); }
-.empty-icon { font-size: 32px; margin-bottom: 8px; }
-.empty-text { font-size: 13px; }
+/* ═══════════════════════════════════════════════
+   手機響應式設計 (max-width: 768px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
 
-/* ── MISC ── */
-.muted { color: var(--text2); }
-.bold  { font-weight: 700; }
-.right { text-align: right; }
+  body { font-size: 14px; }
+
+  /* ── HEADER：改成可換行、垂直堆疊 ── */
+  .hdr {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .hdr-brand {
+    border-right: none;
+    padding: 4px 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  .hdr-logo { font-size: 15px; }
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: none;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 0 14px;
+    font-size: 12px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+  .hdr-right {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .hdr-right .btn { flex: 1; min-width: 130px; justify-content: center; }
+  .chip { font-size: 10px; }
+
+  /* ── MAIN ── */
+  .main { padding: 12px; max-width: 100%; }
+
+  /* ── STAT CARDS：兩欄 ── */
+  .stats { gap: 8px; }
+  .stat { min-width: calc(50% - 4px); flex: none; padding: 12px 14px; }
+  .stat-val { font-size: 19px; }
+
+  /* ── FORM ROW：垂直堆疊，輸入框全寬 ── */
+  .form-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .fg { width: 100%; }
+  .fc { width: 100%; min-width: 0; padding: 10px 12px; font-size: 14px; }
+  .fc-wide { min-width: 0; }
+  .filter-pills { width: 100%; }
+  .form-row > div[style*="margin-left:auto"] {
+    margin-left: 0 !important;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* ── 按鈕加大，方便點按 ── */
+  .btn { padding: 10px 16px; font-size: 13px; }
+  .btn-sm { padding: 8px 12px; font-size: 12px; }
+  .pill { padding: 7px 14px; font-size: 12px; }
+
+  /* ── GRID 改單欄 ── */
+  .grid2, .grid3 { grid-template-columns: 1fr; gap: 14px; }
+
+  /* ── 表格 → 卡片化 ── */
+  .tw { overflow: visible; border: none; background: transparent; }
+  .tw.scrollable { max-height: none; }
+  table { min-width: 0; }
+  thead { display: none; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  tr {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    margin-bottom: 10px;
+    padding: 10px 12px;
+  }
+  tr:hover td { background: transparent; }
+  td {
+    border-top: none;
+    padding: 6px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  td.num { text-align: right; justify-content: space-between; }
+  /* 用 data-label 顯示欄位名稱（由 JS data-th 屬性提供，若無則靠內容自解釋） */
+  td[data-th]::before {
+    content: attr(data-th);
+    color: var(--text2);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    flex-shrink: 0;
+  }
+  /* 沒有 data-th 的最後一欄（通常是操作按鈕）靠右對齊、無上邊距分隔 */
+  td:has(button):last-child {
+    justify-content: flex-end;
+    padding-top: 8px;
+    margin-top: 4px;
+    border-top: 1px solid var(--border);
+  }
+  .empty-state { padding: 30px 16px; }
+
+  /* ── 出貨配分卡片（已是 block 結構）：通路 grid 改 2 欄 ── */
+  .ac-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .ac-head { flex-wrap: wrap; }
+
+  /* ── 品番管理 alloc 通路 row（DASKA modal）→ 直接堆疊 ── */
+  .channel-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 12px 0;
+  }
+  .ch-pct { text-align: left; }
+
+  /* ── MODAL：全螢幕呈現 ── */
+  .modal-bg { padding: 0; align-items: flex-end; }
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    padding: 18px 16px 22px;
+  }
+  .modal-grid, .modal-grid.g3 { grid-template-columns: 1fr; gap: 10px; }
+  .modal-title { font-size: 15px; }
+  .modal-footer { flex-wrap: wrap; }
+  .modal-footer > div { width: 100%; margin-bottom: 6px; }
+  .modal-footer .btn { flex: 1; }
+
+  /* DASKA sync modal 內部表格也卡片化 */
+  #m-daska .modal { width: 100%; }
+  .alloc-header { flex-direction: column; gap: 10px; }
+
+  /* ── TOAST：滿版底部 ── */
+  .toast-wrap { left: 12px; right: 12px; bottom: 12px; }
+  .toast { min-width: 0; width: 100%; }
+
+  /* ── 統計總覽：最近記錄/配分狀況表格也卡片化（繼承上面規則）── */
+}
+
+@media (max-width: 420px) {
+  .stat { min-width: 100%; }
+  .ac-grid { grid-template-columns: 1fr; }
+}
 </style>
 <!-- Firebase SDK (載入後才能用 file:// 開啟) -->
 <script type="module">
@@ -820,16 +970,16 @@ function renderDailyTable() {
     const wd = weekday(e.date);
     const wdStyle = e.date ? (() => { const d=new Date(e.date+'T00:00:00').getDay(); return d===0?'color:#e05c6a':d===6?'color:#5b8ee0':''; })() : '';
     return `<tr>
-      <td class="bold">${e.date}</td>
-      <td class="muted" style="${wdStyle}">${wd}</td>
-      <td>${tag(e.brand)}</td>
-      <td class="bold">${e.product||'–'}</td>
-      <td class="num muted">${e.target ? fmt(e.target) : '–'}</td>
-      <td class="num bold">${fmt(e.actual)}</td>
-      <td class="num ${diffCls}">${diffTxt}</td>
-      <td class="num muted">${cumRate}</td>
-      <td class="num muted">${e.workers || '–'}</td>
-      <td class="muted" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.note||''}">${e.note||''}</td>
+      <td class="bold" data-th="日期">${e.date}</td>
+      <td class="muted" data-th="星期" style="${wdStyle}">${wd}</td>
+      <td data-th="品牌">${tag(e.brand)}</td>
+      <td class="bold" data-th="品番">${e.product||'–'}</td>
+      <td class="num muted" data-th="目標量">${e.target ? fmt(e.target) : '–'}</td>
+      <td class="num bold" data-th="實際數量">${fmt(e.actual)}</td>
+      <td class="num ${diffCls}" data-th="差異">${diffTxt}</td>
+      <td class="num muted" data-th="累進率">${cumRate}</td>
+      <td class="num muted" data-th="人數">${e.workers || '–'}</td>
+      <td class="muted" data-th="備注" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.note||''}">${e.note||''}</td>
       <td style="white-space:nowrap">
         <button class="btn-alloc" onclick="openEditEntry('${e.id}')">編輯</button>
         <button class="btn btn-danger" onclick="deleteEntry('${e.id}')">✕</button>
@@ -1025,16 +1175,16 @@ function renderAllocList() {
     const rate  = prod > 0 ? pct(alloc, prod) : '–';
     const dot   = ua > 0 ? '🔴' : ua === 0 && prod > 0 ? '🟢' : '⚪';
     return `<tr>
-      <td>${tag(p.brand)}</td>
-      <td class="bold">${p.code}</td>
-      <td class="num">${fmt(prod)}</td>
-      <td class="num" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#9b7de8">${a.ec  ? fmt(a.ec)  : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
-      <td class="num">${fmt(alloc)}</td>
-      <td class="num" style="${uaStyle}">${dot} ${ua >= 0 ? fmt(ua) : '超出 '+fmt(-ua)}</td>
-      <td class="num muted">${rate}</td>
+      <td data-th="品牌">${tag(p.brand)}</td>
+      <td class="bold" data-th="品番">${p.code}</td>
+      <td class="num" data-th="累計生產">${fmt(prod)}</td>
+      <td class="num" data-th="VT百貨" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="WEB" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="EC" style="color:#9b7de8">${a.ec  ? fmt(a.ec)  : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="買取" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="已配分">${fmt(alloc)}</td>
+      <td class="num" data-th="未配分" style="${uaStyle}">${dot} ${ua >= 0 ? fmt(ua) : '超出 '+fmt(-ua)}</td>
+      <td class="num muted" data-th="配分率">${rate}</td>
       <td><button class="btn btn-primary btn-sm" onclick="openAlloc('${p.id}')">配分</button></td>
     </tr>`;
   }).join('');
@@ -1139,14 +1289,14 @@ function renderProducts() {
     const prod = totalProduced(p.id);
     const clr  = BRAND_COLORS[p.brand] || 'var(--text)';
     return `<tr>
-      <td>${tag(p.brand)}</td>
-      <td class="bold">${p.code}</td>
-      <td class="num muted">${p.max ? fmt(p.max) : '–'}</td>
-      <td class="num" style="color:${clr}">${fmt(prod)}</td>
-      <td style="min-width:100px">${p.max ? pb(prod, p.max, clr) : ''}</td>
-      <td class="num">${p.max ? pct(prod, p.max) : '–'}</td>
-      <td class="num">${p.box_qty ? '<span style="color:var(--accent);font-weight:700">'+p.box_qty+'</span> 個' : '<span class="muted">–</span>'}</td>
-      <td class="num muted">${p.price ? '¥'+fmt(p.price) : '–'}</td>
+      <td data-th="品牌">${tag(p.brand)}</td>
+      <td class="bold" data-th="品番">${p.code}</td>
+      <td class="num muted" data-th="目標MAX">${p.max ? fmt(p.max) : '–'}</td>
+      <td class="num" data-th="累計生產" style="color:${clr}">${fmt(prod)}</td>
+      <td data-th="進捗" style="min-width:100px">${p.max ? pb(prod, p.max, clr) : ''}</td>
+      <td class="num" data-th="進捗率">${p.max ? pct(prod, p.max) : '–'}</td>
+      <td class="num" data-th="入數/箱">${p.box_qty ? '<span style="color:var(--accent);font-weight:700">'+p.box_qty+'</span> 個' : '<span class="muted">–</span>'}</td>
+      <td class="num muted" data-th="稅含價格">${p.price ? '¥'+fmt(p.price) : '–'}</td>
       <td><button class="btn btn-ghost btn-sm" onclick="openEditProduct('${p.id}')">編輯</button></td>
     </tr>`;
   }).join('');
@@ -1261,18 +1411,18 @@ function renderDash() {
     const bMax   = bProds.reduce((s,p) => s + (p.max||0), 0);
     const bProd  = bProds.reduce((s,p) => s + totalProduced(p.id), 0);
     const clr    = BRAND_COLORS[b];
-    return `<tr><td>${tag(b)}</td><td class="num">${fmt(bProd)}</td>
-      <td class="num muted">${bMax ? fmt(bMax) : '–'}</td>
-      <td class="num" style="color:${clr}">${bMax ? pct(bProd,bMax) : '–'}</td>
-      <td>${bMax ? pb(bProd,bMax,clr) : ''}</td></tr>`;
+    return `<tr><td data-th="品牌">${tag(b)}</td><td class="num" data-th="累計生產">${fmt(bProd)}</td>
+      <td class="num muted" data-th="目標Max">${bMax ? fmt(bMax) : '–'}</td>
+      <td class="num" data-th="進捗率" style="color:${clr}">${bMax ? pct(bProd,bMax) : '–'}</td>
+      <td data-th="進度條">${bMax ? pb(bProd,bMax,clr) : ''}</td></tr>`;
   }).join('');
   document.getElementById('dash-brand').innerHTML = brandRows || `<tr><td colspan="5"><div class="empty-state"><div class="empty-text">尚無品番資料</div></div></td></tr>`;
 
   // 最近10筆
   const recent = [...entries].sort((a,b) => b.date.localeCompare(a.date)||b.createdAt-a.createdAt).slice(0,10);
   document.getElementById('dash-recent').innerHTML = recent.length ? recent.map(e=>
-    `<tr><td class="muted">${e.date}</td><td>${tag(e.brand)} <b>${e.product}</b></td>
-    <td class="num">${fmt(e.actual)}</td><td class="muted" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note||''}</td></tr>`
+    `<tr><td class="muted" data-th="日期">${e.date}</td><td data-th="品番">${tag(e.brand)} <b>${e.product}</b></td>
+    <td class="num" data-th="實際">${fmt(e.actual)}</td><td class="muted" data-th="備注" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note||''}</td></tr>`
   ).join('') : `<tr><td colspan="4"><div class="empty-state"><div class="empty-text">尚無記錄</div></div></td></tr>`;
 
   // 配分總覽
@@ -1286,13 +1436,13 @@ function renderDash() {
     const ua    = prod - alloc;
     const uaStyle = ua > 0 ? 'color:var(--red);font-weight:700' : ua <= 0 ? 'color:var(--green)' : '';
     return `<tr>
-      <td>${tag(p.brand)}</td><td class="bold">${p.code}</td>
-      <td class="num">${fmt(prod)}</td>
-      <td class="num" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#9b7de8">${a.ec ? fmt(a.ec) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
-      <td class="num" style="${uaStyle}">${ua>0?fmt(ua):(ua===0?'✓ 完成':'超出'+fmt(-ua))}</td>
+      <td data-th="品牌">${tag(p.brand)}</td><td class="bold" data-th="品番">${p.code}</td>
+      <td class="num" data-th="累計生產">${fmt(prod)}</td>
+      <td class="num" data-th="VT百貨" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="WEB" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="EC" style="color:#9b7de8">${a.ec ? fmt(a.ec) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="買取" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="未配分" style="${uaStyle}">${ua>0?fmt(ua):(ua===0?'✓ 完成':'超出'+fmt(-ua))}</td>
       <td><button class="btn-alloc" onclick="openAlloc('${p.id}');switchTab('alloc')">配分</button></td>
     </tr>`;
   }).join('') : `<tr><td colspan="9"><div class="empty-state"><div class="empty-text">尚無生產記錄</div></div></td></tr>`;
@@ -1405,10 +1555,10 @@ function refreshDaskaPreview() {
       ? `<span style="color:var(--accent);font-weight:700">${boxes} 箱</span><span style="color:var(--text2);font-size:10px;margin-left:4px">(${e.actual.toLocaleString()}個 ÷ ${bq})</span>`
       : `${e.actual.toLocaleString()} 個<span style="color:var(--red);font-size:10px;margin-left:4px">（未設入數）</span>`;
     return `<tr style="opacity:${isSynced?'0.5':'1'}">
-      <td style="padding:7px 12px;font-weight:700;font-size:12px">${e.product}</td>
-      <td style="padding:7px 12px;text-align:right;font-size:12px">${boxTxt}</td>
-      <td style="padding:7px 12px;color:var(--text2);font-size:12px">${e.date}</td>
-      <td style="padding:7px 12px;text-align:center">${statusBadge}</td>
+      <td data-th="品番" style="padding:7px 12px;font-weight:700;font-size:12px">${e.product}</td>
+      <td data-th="換算箱數" style="padding:7px 12px;text-align:right;font-size:12px">${boxTxt}</td>
+      <td data-th="日期" style="padding:7px 12px;color:var(--text2);font-size:12px">${e.date}</td>
+      <td data-th="狀態" style="padding:7px 12px;text-align:center">${statusBadge}</td>
     </tr>`;
   }).join('');
 
