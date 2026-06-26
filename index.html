@@ -338,7 +338,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 <!-- Firebase SDK (載入後才能用 file:// 開啟) -->
 <script type="module">
   import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+  import { getDatabase, ref, get, set, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
   const FIREBASE_CONFIG = {
     apiKey:      "AIzaSyDIS9wZH0pFMUFj-CTROb-cewiFTknrKmE",
@@ -350,16 +350,47 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
   const app = getApps().length ? getApps()[0] : initializeApp(FIREBASE_CONFIG);
   const db  = getDatabase(app);
 
-  window._fbDb     = db;
-  window._fbRef    = ref;
-  window._fbGet    = get;
-  window._fbSet    = set;
-  window._fbRemove = remove;
-  window._fbReady  = true;
+  window._fbDb      = db;
+  window._fbRef     = ref;
+  window._fbGet     = get;
+  window._fbSet     = set;
+  window._fbRemove  = remove;
+  window._fbUpdate  = update;
+  window._fbOnValue = onValue;
+  window._fbReady   = true;
   console.log('Firebase 載入完成');
 </script>
 </head>
 <body>
+
+<!-- ═══ 登入畫面 ═══ -->
+<div id="login-screen" style="position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div style="width:100%;max-width:380px;">
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="font-size:20px;font-weight:800;letter-spacing:.08em;color:var(--accent);">生產管理</div>
+      <div style="font-size:11px;color:var(--text2);margin-top:4px;">每日記錄 → 出貨配分 → 雲端同步</div>
+    </div>
+
+    <!-- 姓名 + 角色 -->
+    <div id="login-step-user">
+      <div class="fg" style="margin-bottom:14px;">
+        <label>你的姓名</label>
+        <input type="text" class="fc" id="login-name" placeholder="輸入你的名字" style="width:100%;padding:12px;font-size:15px;">
+      </div>
+      <div class="fg" style="margin-bottom:18px;">
+        <label>身分角色</label>
+        <div style="display:flex;gap:10px;margin-top:6px;">
+          <button type="button" class="pill" id="role-staff" style="flex:1;padding:12px;font-size:13px;" onclick="selectRole('staff')">👤 現場人員</button>
+          <button type="button" class="pill" id="role-admin" style="flex:1;padding:12px;font-size:13px;" onclick="selectRole('admin')">🛠 主管</button>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.5;">
+          現場人員：可輸入生產記錄、查看報表<br>主管：額外可編輯/刪除記錄、管理品番
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;justify-content:center;" onclick="completeLogin()">開始使用</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ HEADER ═══ -->
 <div class="hdr">
@@ -370,14 +401,15 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
     </div>
   </div>
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('daily')"><span class="ico">📅</span>每日生產</div>
+    <div class="tab" onclick="switchTab('daily')"><span class="ico">📅</span>每日生產</div>
     <div class="tab" onclick="switchTab('alloc')"><span class="ico">📦</span>出貨配分</div>
     <div class="tab" onclick="switchTab('product')"><span class="ico">🗂</span>品番管理</div>
-    <div class="tab" onclick="switchTab('dash')"><span class="ico">📊</span>統計總覽</div>
+    <div class="tab active" onclick="switchTab('dash')"><span class="ico">📊</span>統計總覽</div>
   </div>
   <div class="hdr-right">
+    <span class="chip" id="current-user-chip" style="cursor:pointer;" onclick="showUserInfo()"></span>
     <span id="daska-status" class="chip" style="display:none"></span>
-    <button class="btn btn-ghost" onclick="openDaskaModal()" style="border-color:var(--blue);color:var(--blue);">⚡ DASKA 同步</button>
+    <button class="btn btn-ghost" id="btn-daska-sync" onclick="openDaskaModal()" style="border-color:var(--blue);color:var(--blue);">⚡ DASKA 同步</button>
     <button class="btn btn-primary" onclick="openAddEntry()">＋ 輸入今日生產</button>
   </div>
 </div>
@@ -385,7 +417,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 <div class="main">
 
 <!-- ═══ 每日生產 ═══ -->
-<div class="panel active" id="p-daily">
+<div class="panel" id="p-daily">
   <div class="form-row">
     <div class="fg">
       <label>品牌</label>
@@ -417,7 +449,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
         <tr>
           <th>日期</th><th>星期</th><th>品牌</th><th>品番</th>
           <th class="num">目標量</th><th class="num">實際數量</th><th class="num">差異</th>
-          <th class="num">累進率</th><th class="num">人數</th><th>備注</th><th></th>
+          <th class="num">累進率</th><th class="num">人數</th><th>備注</th><th>輸入者</th><th></th>
         </tr>
       </thead>
       <tbody id="t-daily"></tbody>
@@ -481,7 +513,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
     <div class="fg" style="margin-left:auto">
       <input class="fc fc-wide" id="pf-search" placeholder="搜尋品番…" oninput="renderProducts()">
     </div>
-    <button class="btn btn-primary btn-sm" onclick="openAddProduct()">＋ 新增品番</button>
+    <button class="btn btn-primary btn-sm" id="btn-add-product" onclick="openAddProduct()">＋ 新增品番</button>
   </div>
   <div class="tw scrollable">
     <table>
@@ -498,7 +530,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 </div>
 
 <!-- ═══ 統計總覽 ═══ -->
-<div class="panel" id="p-dash">
+<div class="panel active" id="p-dash">
   <div class="stats" id="dash-stats"></div>
   <div class="grid2">
     <div>
@@ -784,6 +816,96 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 // ║  資料層  (localStorage)                         ║
 // ╚══════════════════════════════════════════════════╝
 const WD_LABELS = ['日','一','二','三','四','五','六'];
+
+// ╔══════════════════════════════════════════════════╗
+// ║  登入 / 權限                                     ║
+// ╚══════════════════════════════════════════════════╝
+let selectedRole = null;
+let currentUser  = null; // { name, role }
+
+// 嘗試帶入上次登入的姓名/角色（方便同一人重新打開）
+function prefillLastUser() {
+  const lastUser = sessionStorage.getItem('vt_current_user');
+  if (lastUser) {
+    try {
+      const u = JSON.parse(lastUser);
+      document.getElementById('login-name').value = u.name || '';
+      if (u.role) selectRole(u.role);
+    } catch {}
+  }
+}
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('role-staff').classList.toggle('active', role === 'staff');
+  document.getElementById('role-admin').classList.toggle('active', role === 'admin');
+}
+
+function completeLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  if (!name) { alert('請輸入你的名字'); return; }
+  if (!selectedRole) { alert('請選擇身分角色'); return; }
+  currentUser = { name, role: selectedRole };
+  sessionStorage.setItem('vt_current_user', JSON.stringify(currentUser));
+  document.getElementById('login-screen').style.display = 'none';
+  updateUserChip();
+  applyRolePermissionsToUI();
+  initAppAfterLogin();
+  switchTab('dash');
+}
+
+function updateUserChip() {
+  if (!currentUser) return;
+  const roleLabel = currentUser.role === 'admin' ? '🛠 主管' : '👤 現場人員';
+  document.getElementById('current-user-chip').textContent = `${currentUser.name}（${roleLabel}）`;
+}
+
+// 依角色顯示/隱藏管理性質的按鈕（現場人員看不到，避免誤觸）
+function applyRolePermissionsToUI() {
+  const adminOnlyBtns = ['btn-daska-sync', 'btn-add-product'];
+  adminOnlyBtns.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAdmin() ? '' : 'none';
+  });
+}
+
+function showUserInfo() {
+  if (confirm(`目前登入：${currentUser.name}（${currentUser.role === 'admin' ? '主管' : '現場人員'}）\n\n要切換使用者嗎？`)) {
+    sessionStorage.removeItem('vt_current_user');
+    location.reload();
+  }
+}
+
+function isAdmin() {
+  return currentUser && currentUser.role === 'admin';
+}
+
+// 權限檢查：非主管嘗試執行管理操作時擋下並提示
+function requireAdmin(actionLabel) {
+  if (!isAdmin()) {
+    toast(`「${actionLabel}」需要主管權限`, 'err');
+    return false;
+  }
+  return true;
+}
+
+// 嘗試自動登入（同分頁刷新內，sessionStorage 還在）
+function tryAutoLogin() {
+  const saved = sessionStorage.getItem('vt_current_user');
+  if (saved) {
+    try {
+      currentUser = JSON.parse(saved);
+      document.getElementById('login-screen').style.display = 'none';
+      updateUserChip();
+      applyRolePermissionsToUI();
+      switchTab('dash');
+      return true;
+    } catch {}
+  }
+  return false;
+}
+
+
 const BRANDS    = ['DES','LE','LF','YT','チーズ','限定','其他'];
 const CH_COLORS = { vt:'#e05c6a', web:'#5b8ee0', ec:'#9b7de8', buy:'#4ec994' };
 const CH_LABELS = { vt:'VT百貨', web:'WEB', ec:'EC', buy:'買取' };
@@ -805,20 +927,20 @@ let allocs   = load('vt_allocs',   {}); // { productId: { vt, web, ec, buy, note
 if (!products || products.length === 0) {
   const DEFAULT_PRODUCTS = [
     // DES
-    {id:'p-DES-T3',brand:'DES',code:'T3',max:77000,price:783,box_qty:110,ec_box_qty:130,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-T3',brand:'DES',code:'T3',max:77000,price:783,box_qty:110,ec_box_qty:196,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-T5',brand:'DES',code:'T5',max:56000,price:1296,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C2',brand:'DES',code:'C2',max:58500,price:648,box_qty:120,ec_box_qty:65,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C3',brand:'DES',code:'C3',max:66000,price:891,box_qty:110,ec_box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C4',brand:'DES',code:'C4',max:58000,price:1134,box_qty:90,ec_box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C5',brand:'DES',code:'C5',max:40000,price:1377,box_qty:94,ec_box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C6',brand:'DES',code:'C6',max:36000,price:1593,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C8',brand:'DES',code:'C8',max:26500,price:2160,box_qty:44,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C10',brand:'DES',code:'C10',max:23500,price:2673,box_qty:36,ec_box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C2',brand:'DES',code:'C2',max:58500,price:648,box_qty:120,ec_box_qty:192,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C3',brand:'DES',code:'C3',max:66000,price:891,box_qty:110,ec_box_qty:128,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C4',brand:'DES',code:'C4',max:58000,price:1134,box_qty:90,ec_box_qty:96,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C5',brand:'DES',code:'C5',max:40000,price:1377,box_qty:94,ec_box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C6',brand:'DES',code:'C6',max:36000,price:1593,box_qty:70,ec_box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C8',brand:'DES',code:'C8',max:26500,price:2160,box_qty:44,ec_box_qty:48,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C10',brand:'DES',code:'C10',max:23500,price:2673,box_qty:36,ec_box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CT6',brand:'DES',code:'CT6',max:71200,price:1512,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CT8',brand:'DES',code:'CT8',max:81000,price:1998,box_qty:44,ec_box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CT10',brand:'DES',code:'CT10',max:55000,price:2457,box_qty:36,ec_box_qty:40,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CT15',brand:'DES',code:'CT15',max:26200,price:3780,box_qty:26,ec_box_qty:35,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT20',brand:'DES',code:'CT20',max:9700,price:4968,box_qty:22,ec_box_qty:35,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT20',brand:'DES',code:'CT20',max:9700,price:4968,box_qty:22,ec_box_qty:28,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CT30',brand:'DES',code:'CT30',max:5100,price:7398,box_qty:12,ec_box_qty:24,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-T10',brand:'DES',code:'T10',max:0,price:2430,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CH10',brand:'DES',code:'CH10',max:0,price:2997,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
@@ -835,17 +957,17 @@ if (!products || products.length === 0) {
     {id:'p-限定-京都伊勢丹CT10',brand:'限定',code:'京都伊勢丹(CT10)',max:200,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-限定-そごう西武8入水藍',brand:'限定',code:'そごう西武(8入)水藍',max:0,price:111,box_qty:11,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // LF
-    {id:'p-LF-LF2',brand:'LF',code:'LF2',max:10500,price:729,box_qty:140,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF3',brand:'LF',code:'LF3',max:9800,price:999,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF4',brand:'LF',code:'LF4',max:11600,price:1296,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF5',brand:'LF',code:'LF5',max:8500,price:1620,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF6',brand:'LF',code:'LF6',max:9200,price:1944,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF8',brand:'LF',code:'LF8',max:10400,price:2538,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF9',brand:'LF',code:'LF9',max:5100,price:2835,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF10',brand:'LF',code:'LF10',max:5300,price:3132,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF12',brand:'LF',code:'LF12',max:3900,price:3672,box_qty:40,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF15',brand:'LF',code:'LF15',max:3500,price:4536,box_qty:34,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF20',brand:'LF',code:'LF20',max:1700,price:5076,box_qty:24,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF2',brand:'LF',code:'LF2',max:10500,price:729,box_qty:140,ec_box_qty:162,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF3',brand:'LF',code:'LF3',max:9800,price:999,box_qty:105,ec_box_qty:108,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF4',brand:'LF',code:'LF4',max:11600,price:1296,box_qty:100,ec_box_qty:81,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF5',brand:'LF',code:'LF5',max:8500,price:1620,box_qty:72,ec_box_qty:63,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF6',brand:'LF',code:'LF6',max:9200,price:1944,box_qty:72,ec_box_qty:56,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF8',brand:'LF',code:'LF8',max:10400,price:2538,box_qty:50,ec_box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF9',brand:'LF',code:'LF9',max:5100,price:2835,box_qty:42,ec_box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF10',brand:'LF',code:'LF10',max:5300,price:3132,box_qty:42,ec_box_qty:35,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF12',brand:'LF',code:'LF12',max:3900,price:3672,box_qty:40,ec_box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF15',brand:'LF',code:'LF15',max:3500,price:4536,box_qty:34,ec_box_qty:48,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF20',brand:'LF',code:'LF20',max:1700,price:5076,box_qty:24,ec_box_qty:32,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-LF-LFT3',brand:'LF',code:'LFT3',max:10500,price:864,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-LF-LFT5',brand:'LF',code:'LFT5',max:9200,price:1404,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-LF-LFT6',brand:'LF',code:'LFT6',max:12000,price:1647,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
@@ -869,9 +991,9 @@ if (!products || products.length === 0) {
     {id:'p-YT-YT2',brand:'YT',code:'YT2',max:1650,price:837,box_qty:110,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT3',brand:'YT',code:'YT3',max:6800,price:134,box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT4',brand:'YT',code:'YT4',max:8600,price:1485,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT5',brand:'YT',code:'YT5',max:10500,price:1782,box_qty:48,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT5',brand:'YT',code:'YT5',max:10500,price:1782,box_qty:48,ec_box_qty:112,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT6',brand:'YT',code:'YT6',max:6700,price:2106,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT8',brand:'YT',code:'YT8',max:9000,price:2781,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT8',brand:'YT',code:'YT8',max:9000,price:2781,box_qty:50,ec_box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT9',brand:'YT',code:'YT9',max:3700,price:3078,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT10',brand:'YT',code:'YT10',max:5000,price:3402,box_qty:33,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-YT-YT12',brand:'YT',code:'YT12',max:1900,price:3996,box_qty:30,vt_target:0,web_target:0,ec_target:0,buy_target:0},
@@ -897,6 +1019,100 @@ function saveAll() {
   save('vt_products', products);
   save('vt_entries',  entries);
   save('vt_allocs',   allocs);
+  // 登入完成且 Firebase 就緒後，才把資料寫上雲端（避免登入前誤寫）
+  if (currentUser && window._fbReady && !isApplyingRemote) {
+    pushToCloud();
+  }
+}
+
+// ── 雲端同步（存在 DASKA 同一個 Firebase，但路徑獨立：/vtProduction/）──
+let isApplyingRemote = false; // 標記：目前是在套用遠端資料，避免寫回造成迴圈
+let cloudSyncEnabled = false;
+let cloudUnsubscribed = false;
+
+async function pushToCloud() {
+  try {
+    const db = window._fbDb;
+    const ref = window._fbRef;
+    const update = window._fbUpdate;
+    await update(ref(db, '/vtProduction'), {
+      products: products,
+      entries:  entries,
+      allocs:   allocs,
+      lastUpdatedBy: currentUser ? currentUser.name : '',
+      lastUpdatedAt: new Date().toISOString(),
+    });
+  } catch (e) {
+    console.error('雲端同步失敗:', e);
+    toast('雲端同步失敗，資料已保留在本機：' + e.message, 'err');
+  }
+}
+
+// 監聽雲端資料變化，自動套用到畫面（多裝置即時同步）
+function subscribeCloud() {
+  if (cloudSyncEnabled) return;
+  cloudSyncEnabled = true;
+  const db = window._fbDb;
+  const ref = window._fbRef;
+  const onValue = window._fbOnValue;
+  let isFirstSnapshot = true;
+
+  onValue(ref(db, '/vtProduction'), (snapshot) => {
+    const data = snapshot.val();
+
+    if (!data) {
+      // 雲端是空的：代表這是第一次啟用雲端同步
+      // 把本機現有資料（含預設 78 個品番）當作初始資料推上雲端，後續裝置才能看到
+      if (isFirstSnapshot && products.length > 0) {
+        pushToCloud();
+        toast('☁️ 已將本機資料初始化上傳至雲端', 'info');
+      }
+      isFirstSnapshot = false;
+      return;
+    }
+    isFirstSnapshot = false;
+
+    isApplyingRemote = true;
+    if (Array.isArray(data.products) && data.products.length) products = data.products;
+    if (Array.isArray(data.entries))  entries  = data.entries;
+    if (data.allocs && typeof data.allocs === 'object') allocs = data.allocs;
+
+    save('vt_products', products);
+    save('vt_entries',  entries);
+    save('vt_allocs',   allocs);
+    isApplyingRemote = false;
+
+    // 重新渲染目前畫面
+    refreshCurrentPanel();
+
+    if (data.lastUpdatedBy && data.lastUpdatedBy !== (currentUser && currentUser.name)) {
+      toast(`📡 ${data.lastUpdatedBy} 更新了資料`, 'info');
+    }
+  });
+}
+
+function refreshCurrentPanel() {
+  const activeTab = document.querySelector('.tab.active');
+  if (!activeTab) return;
+  const idx = Array.from(document.querySelectorAll('.tab')).indexOf(activeTab);
+  const names = ['daily','alloc','product','dash'];
+  const name = names[idx];
+  if (name === 'daily')   renderDailyTable();
+  if (name === 'alloc')   renderAllocList();
+  if (name === 'product') renderProducts();
+  if (name === 'dash')    renderDash();
+}
+
+// 登入完成後呼叫：連上雲端、取得最新資料、開始即時監聽
+function initAppAfterLogin() {
+  const waitForFirebase = () => {
+    if (window._fbReady) {
+      subscribeCloud();
+    } else {
+      setTimeout(waitForFirebase, 150);
+    }
+  };
+  waitForFirebase();
 }
 
 // 工具函式
@@ -962,7 +1178,7 @@ function renderDailyTable() {
 
   const tbody = document.getElementById('t-daily');
   if(!data.length) {
-    tbody.innerHTML = `<tr><td colspan="11"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">尚無記錄，點選右上角「輸入今日生產」開始記錄</div></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">尚無記錄，點選右上角「輸入今日生產」開始記錄</div></div></td></tr>`;
     return;
   }
 
@@ -986,9 +1202,10 @@ function renderDailyTable() {
       <td class="num muted" data-th="累進率">${cumRate}</td>
       <td class="num muted" data-th="人數">${e.workers || '–'}</td>
       <td class="muted" data-th="備注" style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${e.note||''}">${e.note||''}</td>
+      <td class="muted" data-th="輸入者" style="font-size:11px">${e.createdBy || '–'}${e.editedBy ? `<br><span style="color:var(--text3)">改:${e.editedBy}</span>` : ''}</td>
       <td style="white-space:nowrap">
         <button class="btn-alloc" onclick="openEditEntry('${e.id}')">編輯</button>
-        <button class="btn btn-danger" onclick="deleteEntry('${e.id}')">✕</button>
+        ${isAdmin() ? `<button class="btn btn-danger" onclick="deleteEntry('${e.id}')">✕</button>` : ''}
       </td>
     </tr>`;
   }).join('');
@@ -1095,8 +1312,9 @@ function saveEntry() {
   const rec = { id: editId||uid(), date, brand, pid, product: productName, actual, target, workers, note, createdAt: Date.now() };
   if(editId) {
     const idx = entries.findIndex(x => x.id === editId);
-    if(idx>=0) entries[idx] = {...entries[idx], ...rec};
+    if(idx>=0) entries[idx] = {...entries[idx], ...rec, editedBy: currentUser?.name || '', editedAt: Date.now()};
   } else {
+    rec.createdBy = currentUser?.name || '';
     entries.push(rec);
   }
   // 如果這筆記錄之前已同步過，標記為需要重新同步
@@ -1114,6 +1332,7 @@ function saveEntry() {
 }
 
 function deleteEntry(id) {
+  if (!requireAdmin('刪除生產記錄')) return;
   const e = entries.find(x => x.id === id);
   if(!e || !confirm(`確認刪除 ${e.date} ${e.product} 的記錄？`)) return;
   entries = entries.filter(x => x.id !== id);
@@ -1271,7 +1490,7 @@ function saveAlloc() {
   const ec   = parseInt(document.getElementById('ma-ec')?.value)  || 0;
   const buy  = parseInt(document.getElementById('ma-buy')?.value) || 0;
   const note = document.getElementById('ma-note').value.trim();
-  allocs[pid] = { vt, web, ec, buy, note, updatedAt: today() };
+  allocs[pid] = { vt, web, ec, buy, note, updatedAt: today(), updatedBy: currentUser?.name || '' };
   saveAll();
   closeModal('m-alloc');
   renderAllocList();
@@ -1321,6 +1540,7 @@ function renderProducts() {
 }
 
 function openAddProduct() {
+  if (!requireAdmin('新增品番')) return;
   document.getElementById('mp-id').value    = '';
   document.getElementById('mp-title').textContent = '🗂 新增品番';
   document.getElementById('mp-brand').value = 'DES';
@@ -1338,6 +1558,7 @@ function openAddProduct() {
 }
 
 function openEditProduct(id) {
+  if (!requireAdmin('編輯品番')) return;
   const p = products.find(x => x.id === id);
   if(!p) return;
   document.getElementById('mp-id').value       = id;
@@ -1357,6 +1578,7 @@ function openEditProduct(id) {
 }
 
 function saveProduct() {
+  if (!requireAdmin('儲存品番')) return;
   const editId = document.getElementById('mp-id').value;
   const code   = document.getElementById('mp-code').value.trim();
   if(!code) { toast('請輸入品番代碼', 'err'); return; }
@@ -1397,6 +1619,7 @@ function autoFillBoxQty(code) {
 }
 
 function deleteProduct() {
+  if (!requireAdmin('刪除品番')) return;
   const id = document.getElementById('mp-id').value;
   const p  = products.find(x => x.id === id);
   if(!p || !confirm(`確認刪除品番「${p.code}」？此操作無法還原。`)) return;
@@ -1505,6 +1728,13 @@ function toast(msg, type='ok') {
 // ╚══════════════════════════════════════════════════╝
 renderDailyTable();
 
+// 如果同一個分頁session已經登入過，自動略過登入畫面
+if (tryAutoLogin()) {
+  initAppAfterLogin();
+} else {
+  prefillLastUser(); // 帶入上次輸入過的姓名/角色，方便快速重新登入
+}
+
 // ╔══════════════════════════════════════════════════╗
 // ║  DASKA Firebase 同步                             ║
 // ╚══════════════════════════════════════════════════╝
@@ -1539,6 +1769,7 @@ async function testDaskaConn() {
 }
 
 function openDaskaModal() {
+  if (!requireAdmin('同步到 DASKA')) return;
   document.getElementById('daska-date').value = today();
   document.getElementById('daska-source').value = 'today';
   document.getElementById('daska-filter-date-wrap').style.display = 'none';
