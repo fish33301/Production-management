@@ -82,7 +82,7 @@ tr:hover td { background: rgba(255,255,255,.018); }
 .tag-LE  { background: rgba(91,142,224,.15);  color: var(--blue); }
 .tag-LF  { background: rgba(200,169,110,.15); color: var(--accent); }
 .tag-YT  { background: rgba(78,201,148,.15);  color: var(--green); }
-.tag-其他  { background: rgba(224,149,92,.15);  color: var(--orange); }
+.tag-半成品  { background: rgba(224,149,92,.15);  color: var(--orange); }
 .tag-チーズ { background: rgba(255,182,193,.15); color: #e8789a; }
 .tag-限定  { background: rgba(212,175,122,.18); color: var(--accent); }
 
@@ -424,7 +424,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <label>品牌</label>
       <select class="fc" id="df-brand" onchange="renderDailyTable()">
         <option value="">全部品牌</option>
-        <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>其他</option>
+        <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>半成品</option>
       </select>
     </div>
     <div class="fg">
@@ -465,7 +465,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <label>品牌</label>
       <select class="fc" id="af-brand" onchange="renderAllocList()">
         <option value="">全部</option>
-        <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>其他</option>
+        <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>半成品</option>
       </select>
     </div>
     <div class="fg">
@@ -510,6 +510,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <button class="pill" id="pp-YT"  onclick="setProdFilter('YT')">YT</button>
       <button class="pill" id="pp-チーズ" onclick="setProdFilter('チーズ')">チーズ</button>
       <button class="pill" id="pp-限定" onclick="setProdFilter('限定')">限定</button>
+      <button class="pill" id="pp-半成品" onclick="setProdFilter('半成品')">半成品</button>
     </div>
     <div class="fg" style="margin-left:auto">
       <input class="fc fc-wide" id="pf-search" placeholder="搜尋品番…" oninput="renderProducts()">
@@ -597,7 +598,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <div class="fg">
         <label>品牌</label>
         <select class="fc" id="e-brand" onchange="updateEntryProducts()">
-          <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>其他</option>
+          <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>半成品</option>
         </select>
       </div>
       <div class="fg">
@@ -704,7 +705,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <div class="fg">
         <label>品牌</label>
         <select class="fc" id="mp-brand">
-          <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>其他</option>
+          <option>DES</option><option>LE</option><option>LF</option><option>YT</option><option>チーズ</option><option>限定</option><option>半成品</option>
         </select>
       </div>
       <div class="fg">
@@ -907,10 +908,10 @@ function tryAutoLogin() {
 }
 
 
-const BRANDS    = ['DES','LE','LF','YT','チーズ','限定','其他'];
+const BRANDS    = ['DES','LE','LF','YT','チーズ','限定','半成品'];
 const CH_COLORS = { vt:'#e05c6a', web:'#5b8ee0', ec:'#9b7de8', buy:'#4ec994' };
 const CH_LABELS = { vt:'VT百貨', web:'WEB', ec:'EC', buy:'買取' };
-const BRAND_COLORS = { DES:'var(--purple)', LE:'var(--blue)', LF:'var(--accent)', YT:'var(--green)', チーズ:'#e8789a', 限定:'var(--accent)', 其他:'var(--orange)' };
+const BRAND_COLORS = { DES:'var(--purple)', LE:'var(--blue)', LF:'var(--accent)', YT:'var(--green)', チーズ:'#e8789a', 限定:'var(--accent)', 半成品:'var(--orange)' };
 
 function load(key, def) {
   try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
@@ -1011,6 +1012,20 @@ if (!products || products.length === 0) {
     {id:'p-チーズ-アソート_8個入',brand:'チーズ',code:'アソート 8個入',max:0,price:2592,box_qty:22,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-チーズ-アソート_12個入',brand:'チーズ',code:'アソート 12個入',max:0,price:3780,box_qty:10,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-チーズ-クッキー',brand:'チーズ',code:'クッキー',max:0,price:927,box_qty:34,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    // DES（工序）
+    {id:'p-DES-DP',brand:'DES',code:'DP',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    // LF（工序）
+    {id:'p-LF-LFP',brand:'LF',code:'LFP',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    // 半成品（工序：投料／切割／試食）
+    {id:'p-半成品-DES1投料',brand:'半成品',code:'DES1投料',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-LF17投料',brand:'半成品',code:'LF17投料',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-切des',brand:'半成品',code:'切des',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-切LF',brand:'半成品',code:'切LF',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-切YT',brand:'半成品',code:'切YT',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-試食des',brand:'半成品',code:'試食des',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-試食LF',brand:'半成品',code:'試食LF',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-試食LE',brand:'半成品',code:'試食LE',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-半成品-試食YT',brand:'半成品',code:'試食YT',max:0,price:0,box_qty:0,vt_target:0,web_target:0,ec_target:0,buy_target:0},
   ];
   products = DEFAULT_PRODUCTS;
   saveAll();
@@ -1126,7 +1141,7 @@ const uid     = ()  => Date.now().toString(36) + Math.random().toString(36).slic
 const BOX_QTY_PRESET = {"T3":110,"T5":70,"C3":110,"C4":90,"C5":70,"C6":70,"CT6":70,"CT6N":70,"CT8":44,"CT8N":44,"CT8N2":44,"CT8N3":44,"CT8N4":44,"CT10":36,"CT10N":36,"CT10N2":36,"C8":44,"C10":36,"CT15":26,"CT20":22,"CT30":12,"C2":150,"LEGr-25g Coffee":120,"LEGr-50g":94,"LERa-25g Raisins":120,"LERa-50g":94,"LEFi-25g Figues":120,"LEFi-50g":94,"LECr-25g Crispy pop":120,"LECr-50g":94,"LENo-25g Noisettines":120,"LENo-50g":94,"LEOr-25g Orange":120,"LEOr-50g":94,"LEBc-25g Cereal":120,"LEBc-50g":94,"LEM 80g":70,"LEM 115g":52,"LEM 180g":32,"LEM 250g":26,"LF8":50,"LF8N3":50,"LF8N4":50,"LF9":42,"LF10":42,"LF12":40,"LF15":34,"LF20":24,"LFT8":50,"LFT8N":50,"LFT6":72,"LFT6N3":72,"LFT5":72,"LFT3":105,"LF6":72,"LF6N2":72,"LF5":72,"LF5N":72,"LF4":100,"LF3":105,"LF3N":105,"LF2":140,"LF2N":140,"LF2N2":140,"LF2N3":140,"LF2N4":140,"YT20":21,"YT15":26,"YT12":30,"YT10":33,"YT10N":33,"YT10N2":33,"YT9":36,"YT9N":36,"YT8":50,"YT8N":50,"YT6":50,"YT6N2":50,"YT5":48,"YT4":70,"阪急うめだYT4":70,"YT3":80,"YT2":110,"プレーン 1個入":140,"ストロベリー 1個入":140,"ナッツ 1個入":140,"プレーン 4個入":40,"ストロベリー 4個入":40,"ナッツ 4個入":40,"プレーン 8個入":22,"アソート 8個入":22,"アソート 12個入":10,"クッキー":34};
 const today   = ()  => new Date().toISOString().split('T')[0];
 const weekday = d   => { const day = new Date(d+'T00:00:00').getDay(); return '週' + WD_LABELS[day]; };
-const tag     = b   => `<span class="tag tag-${b||'其他'}">${b||'–'}</span>`;
+const tag     = b   => `<span class="tag tag-${b||'半成品'}">${b||'–'}</span>`;
 
 function pb(val, max, color='var(--accent)') {
   const w = pctN(val, max);
@@ -1504,7 +1519,7 @@ function saveAlloc() {
 // ╚══════════════════════════════════════════════════╝
 function setProdFilter(v) {
   prodFilter = v;
-  ['all','DES','LE','LF','YT','チーズ','限定'].forEach(x => {
+  ['all','DES','LE','LF','YT','チーズ','限定','半成品'].forEach(x => {
     const el = document.getElementById('pp-'+x);
     if(el) el.classList.toggle('active', (x==='all'&&!v)||(x===v));
   });
@@ -1652,7 +1667,7 @@ function renderDash() {
   `;
 
   // 品牌別進捗
-  const brandRows = BRANDS.filter(b=>b!=='其他').map(b => {
+  const brandRows = BRANDS.map(b => {
     const bProds = products.filter(p => p.brand === b);
     const bMax   = bProds.reduce((s,p) => s + (p.max||0), 0);
     const bProd  = bProds.reduce((s,p) => s + totalProduced(p.id), 0);
