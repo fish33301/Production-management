@@ -452,8 +452,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
           <th>品牌</th><th>品番</th>
           <th class="num">累計生產</th>
           <th class="num"><span style="color:#e05c6a">VT 百貨</span></th>
-          <th class="num"><span style="color:#5b8ee0">WEB</span></th>
           <th class="num"><span style="color:#9b7de8">EC</span></th>
+          <th class="num"><span style="color:#5b8ee0">WEB</span></th>
           <th class="num"><span style="color:#4ec994">買取</span></th>
           <th class="num">已配分</th>
           <th class="num">未配分</th>
@@ -533,8 +533,8 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
       <thead><tr>
         <th>品牌</th><th>品番</th><th class="num">累計生產</th>
         <th class="num" style="color:#e05c6a">VT百貨</th>
-        <th class="num" style="color:#5b8ee0">WEB</th>
         <th class="num" style="color:#9b7de8">EC</th>
+        <th class="num" style="color:#5b8ee0">WEB</th>
         <th class="num" style="color:#4ec994">買取</th>
         <th class="num">未配分</th>
         <th></th>
@@ -693,11 +693,17 @@ hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
         <input type="number" class="fc fc-num" id="mp-boxqty" placeholder="例：110" min="1">
       </div>
     </div>
+    <div class="modal-grid" style="margin-top:10px;">
+      <div class="fg">
+        <label>EC 裝箱數 <span style="color:var(--purple)">個/箱（若與一般入數不同才填）</span></label>
+        <input type="number" class="fc fc-num" id="mp-ecboxqty" placeholder="留空＝沿用一般入數" min="1">
+      </div>
+    </div>
     <div class="modal-section" style="margin-top:16px;">初始配分目標（選填）</div>
     <div class="modal-grid g3">
       <div class="fg"><label>VT 百貨</label><input type="number" class="fc fc-num fc-sm" id="mp-vt" placeholder="0" min="0"></div>
-      <div class="fg"><label>WEB</label><input type="number" class="fc fc-num fc-sm" id="mp-web" placeholder="0" min="0"></div>
       <div class="fg"><label>EC</label><input type="number" class="fc fc-num fc-sm" id="mp-ec" placeholder="0" min="0"></div>
+      <div class="fg"><label>WEB</label><input type="number" class="fc fc-num fc-sm" id="mp-web" placeholder="0" min="0"></div>
       <div class="fg"><label>買取</label><input type="number" class="fc fc-num fc-sm" id="mp-buy" placeholder="0" min="0"></div>
     </div>
     <div class="modal-footer">
@@ -799,78 +805,78 @@ let allocs   = load('vt_allocs',   {}); // { productId: { vt, web, ec, buy, note
 if (!products || products.length === 0) {
   const DEFAULT_PRODUCTS = [
     // DES
-    {id:'p-DES-T3',brand:'DES',code:'T3',max:0,price:783,box_qty:110,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-T5',brand:'DES',code:'T5',max:0,price:1296,box_qty:70,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C2',brand:'DES',code:'C2',max:0,price:648,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C3',brand:'DES',code:'C3',max:0,price:891,box_qty:110,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C4',brand:'DES',code:'C4',max:0,price:1134,box_qty:90,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C5',brand:'DES',code:'C5',max:0,price:1377,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C6',brand:'DES',code:'C6',max:0,price:1593,box_qty:70,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C8',brand:'DES',code:'C8',max:0,price:2160,box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-C10',brand:'DES',code:'C10',max:0,price:2673,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT6',brand:'DES',code:'CT6',max:0,price:1512,box_qty:70,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT8',brand:'DES',code:'CT8',max:0,price:1998,box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT10',brand:'DES',code:'CT10',max:0,price:2457,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT15',brand:'DES',code:'CT15',max:0,price:3780,box_qty:26,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT20',brand:'DES',code:'CT20',max:0,price:4968,box_qty:22,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-CT30',brand:'DES',code:'CT30',max:0,price:7398,box_qty:12,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-T3',brand:'DES',code:'T3',max:77000,price:783,box_qty:110,ec_box_qty:130,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-T5',brand:'DES',code:'T5',max:56000,price:1296,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C2',brand:'DES',code:'C2',max:58500,price:648,box_qty:120,ec_box_qty:65,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C3',brand:'DES',code:'C3',max:66000,price:891,box_qty:110,ec_box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C4',brand:'DES',code:'C4',max:58000,price:1134,box_qty:90,ec_box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C5',brand:'DES',code:'C5',max:40000,price:1377,box_qty:94,ec_box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C6',brand:'DES',code:'C6',max:36000,price:1593,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C8',brand:'DES',code:'C8',max:26500,price:2160,box_qty:44,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-C10',brand:'DES',code:'C10',max:23500,price:2673,box_qty:36,ec_box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT6',brand:'DES',code:'CT6',max:71200,price:1512,box_qty:70,ec_box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT8',brand:'DES',code:'CT8',max:81000,price:1998,box_qty:44,ec_box_qty:44,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT10',brand:'DES',code:'CT10',max:55000,price:2457,box_qty:36,ec_box_qty:40,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT15',brand:'DES',code:'CT15',max:26200,price:3780,box_qty:26,ec_box_qty:35,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT20',brand:'DES',code:'CT20',max:9700,price:4968,box_qty:22,ec_box_qty:35,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-CT30',brand:'DES',code:'CT30',max:5100,price:7398,box_qty:12,ec_box_qty:24,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-T10',brand:'DES',code:'T10',max:0,price:2430,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-DES-CH10',brand:'DES',code:'CH10',max:0,price:2997,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-DES-ITA10',brand:'DES',code:'ITA10',max:0,price:540,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-DES-ITA10',brand:'DES',code:'ITA10',max:0,price:540,box_qty:100,ec_box_qty:87,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // 限定
-    {id:'p-限定-大丸松坂屋8入橘',brand:'限定',code:'大丸松坂屋(8入)橘',max:0,price:1,box_qty:11,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-そごう西武8入黃',brand:'限定',code:'そごう西武(8入)黃',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-婦人画報XmasCT10CH',brand:'限定',code:"婦人画報X'mas(CT10CH)",max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-仙台三越CT10',brand:'限定',code:'仙台三越(CT10)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-銀座三越C10',brand:'限定',code:'銀座三越(C10)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-伊勢丹新宿C8',brand:'限定',code:'伊勢丹新宿(C8)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-日本橋三越T10',brand:'限定',code:'日本橋三越(T10)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-東武宇都宮T10',brand:'限定',code:'東武宇都宮(T10)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-限定-京都伊勢丹CT10',brand:'限定',code:'京都伊勢丹(CT10)',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-大丸松坂屋8入橘',brand:'限定',code:'大丸松坂屋(8入)橘',max:4000,price:1,box_qty:11,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-そごう西武8入黃',brand:'限定',code:'そごう西武(8入)黃',max:4000,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-婦人画報XmasCT10CH',brand:'限定',code:"婦人画報X'mas(CT10CH)",max:600,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-仙台三越CT10',brand:'限定',code:'仙台三越(CT10)',max:300,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-銀座三越C10',brand:'限定',code:'銀座三越(C10)',max:400,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-伊勢丹新宿C8',brand:'限定',code:'伊勢丹新宿(C8)',max:600,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-日本橋三越T10',brand:'限定',code:'日本橋三越(T10)',max:300,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-東武宇都宮T10',brand:'限定',code:'東武宇都宮(T10)',max:200,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-限定-京都伊勢丹CT10',brand:'限定',code:'京都伊勢丹(CT10)',max:200,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-限定-そごう西武8入水藍',brand:'限定',code:'そごう西武(8入)水藍',max:0,price:111,box_qty:11,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // LF
-    {id:'p-LF-LF2',brand:'LF',code:'LF2',max:0,price:729,box_qty:140,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF3',brand:'LF',code:'LF3',max:0,price:999,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF4',brand:'LF',code:'LF4',max:0,price:1296,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF5',brand:'LF',code:'LF5',max:0,price:1620,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF6',brand:'LF',code:'LF6',max:0,price:1944,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF8',brand:'LF',code:'LF8',max:0,price:2538,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF9',brand:'LF',code:'LF9',max:0,price:2835,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF10',brand:'LF',code:'LF10',max:0,price:3132,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF12',brand:'LF',code:'LF12',max:0,price:3672,box_qty:40,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF15',brand:'LF',code:'LF15',max:0,price:4536,box_qty:34,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LF20',brand:'LF',code:'LF20',max:0,price:5076,box_qty:24,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LFT3',brand:'LF',code:'LFT3',max:0,price:864,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LFT5',brand:'LF',code:'LFT5',max:0,price:1404,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LFT6',brand:'LF',code:'LFT6',max:0,price:1647,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LF-LFT8',brand:'LF',code:'LFT8',max:0,price:2160,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF2',brand:'LF',code:'LF2',max:10500,price:729,box_qty:140,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF3',brand:'LF',code:'LF3',max:9800,price:999,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF4',brand:'LF',code:'LF4',max:11600,price:1296,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF5',brand:'LF',code:'LF5',max:8500,price:1620,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF6',brand:'LF',code:'LF6',max:9200,price:1944,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF8',brand:'LF',code:'LF8',max:10400,price:2538,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF9',brand:'LF',code:'LF9',max:5100,price:2835,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF10',brand:'LF',code:'LF10',max:5300,price:3132,box_qty:42,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF12',brand:'LF',code:'LF12',max:3900,price:3672,box_qty:40,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF15',brand:'LF',code:'LF15',max:3500,price:4536,box_qty:34,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LF20',brand:'LF',code:'LF20',max:1700,price:5076,box_qty:24,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LFT3',brand:'LF',code:'LFT3',max:10500,price:864,box_qty:105,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LFT5',brand:'LF',code:'LFT5',max:9200,price:1404,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LFT6',brand:'LF',code:'LFT6',max:12000,price:1647,box_qty:72,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LF-LFT8',brand:'LF',code:'LFT8',max:14200,price:2160,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // LE
-    {id:'p-LE-LEGr-25g_コーヒ',brand:'LE',code:'LEGr-25g コーヒ',max:0,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEGr-50g',brand:'LE',code:'LEGr-50g',max:0,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LERa-25g_レーズン',brand:'LE',code:'LERa-25g レーズン',max:0,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LERa-50g',brand:'LE',code:'LERa-50g',max:0,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEFi-25g_イチジク',brand:'LE',code:'LEFi-25g イチジク',max:0,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEFi-50g',brand:'LE',code:'LEFi-50g',max:0,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEOr-25g_オレンジ',brand:'LE',code:'LEOr-25g オレンジ',max:0,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEOr-50g',brand:'LE',code:'LEOr-50g',max:0,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEM_80g',brand:'LE',code:'LEM 80g',max:0,price:1890,box_qty:32,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LERa-100g_レーズン',brand:'LE',code:'LERa-100g レーズン',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEFi-100g_イチジク',brand:'LE',code:'LEFi-100g イチジク',max:0,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEM_115g',brand:'LE',code:'LEM 115g',max:0,price:2457,box_qty:52,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEM-180g',brand:'LE',code:'LEM-180g',max:0,price:3483,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-LE-LEM-250g',brand:'LE',code:'LEM-250g',max:0,price:4779,box_qty:26,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEGr-25g_コーヒ',brand:'LE',code:'LEGr-25g コーヒ',max:8500,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEGr-50g',brand:'LE',code:'LEGr-50g',max:4700,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LERa-25g_レーズン',brand:'LE',code:'LERa-25g レーズン',max:12600,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LERa-50g',brand:'LE',code:'LERa-50g',max:12000,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEFi-25g_イチジク',brand:'LE',code:'LEFi-25g イチジク',max:13700,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEFi-50g',brand:'LE',code:'LEFi-50g',max:12500,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEOr-25g_オレンジ',brand:'LE',code:'LEOr-25g オレンジ',max:10000,price:729,box_qty:120,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEOr-50g',brand:'LE',code:'LEOr-50g',max:4900,price:1188,box_qty:94,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEM_80g',brand:'LE',code:'LEM 80g',max:44100,price:1890,box_qty:32,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LERa-100g_レーズン',brand:'LE',code:'LERa-100g レーズン',max:5800,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEFi-100g_イチジク',brand:'LE',code:'LEFi-100g イチジク',max:6300,price:0,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEM_115g',brand:'LE',code:'LEM 115g',max:24100,price:2457,box_qty:52,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEM-180g',brand:'LE',code:'LEM-180g',max:19000,price:3483,box_qty:1,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-LE-LEM-250g',brand:'LE',code:'LEM-250g',max:4000,price:4779,box_qty:26,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // YT
-    {id:'p-YT-YT2',brand:'YT',code:'YT2',max:0,price:837,box_qty:110,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT3',brand:'YT',code:'YT3',max:0,price:134,box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT4',brand:'YT',code:'YT4',max:0,price:1485,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT5',brand:'YT',code:'YT5',max:0,price:1782,box_qty:48,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT6',brand:'YT',code:'YT6',max:0,price:2106,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT8',brand:'YT',code:'YT8',max:0,price:2781,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT9',brand:'YT',code:'YT9',max:0,price:3078,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT10',brand:'YT',code:'YT10',max:0,price:3402,box_qty:33,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT12',brand:'YT',code:'YT12',max:0,price:3996,box_qty:30,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT15',brand:'YT',code:'YT15',max:0,price:4968,box_qty:26,vt_target:0,web_target:0,ec_target:0,buy_target:0},
-    {id:'p-YT-YT20',brand:'YT',code:'YT20',max:0,price:6480,box_qty:21,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT2',brand:'YT',code:'YT2',max:1650,price:837,box_qty:110,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT3',brand:'YT',code:'YT3',max:6800,price:134,box_qty:80,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT4',brand:'YT',code:'YT4',max:8600,price:1485,box_qty:100,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT5',brand:'YT',code:'YT5',max:10500,price:1782,box_qty:48,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT6',brand:'YT',code:'YT6',max:6700,price:2106,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT8',brand:'YT',code:'YT8',max:9000,price:2781,box_qty:50,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT9',brand:'YT',code:'YT9',max:3700,price:3078,box_qty:36,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT10',brand:'YT',code:'YT10',max:5000,price:3402,box_qty:33,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT12',brand:'YT',code:'YT12',max:1900,price:3996,box_qty:30,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT15',brand:'YT',code:'YT15',max:1850,price:4968,box_qty:26,vt_target:0,web_target:0,ec_target:0,buy_target:0},
+    {id:'p-YT-YT20',brand:'YT',code:'YT20',max:800,price:6480,box_qty:21,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     // チーズ
     {id:'p-チーズ-プレーン_1個入',brand:'チーズ',code:'プレーン 1個入',max:0,price:324,box_qty:140,vt_target:0,web_target:0,ec_target:0,buy_target:0},
     {id:'p-チーズ-ストロベリー_1個入',brand:'チーズ',code:'ストロベリー 1個入',max:0,price:351,box_qty:140,vt_target:0,web_target:0,ec_target:0,buy_target:0},
@@ -1174,14 +1180,22 @@ function renderAllocList() {
     const uaStyle = ua > 0 ? 'color:var(--red);font-weight:700' : ua < 0 ? 'color:var(--orange)' : 'color:var(--green)';
     const rate  = prod > 0 ? pct(alloc, prod) : '–';
     const dot   = ua > 0 ? '🔴' : ua === 0 && prod > 0 ? '🟢' : '⚪';
+    const bq    = p.box_qty || BOX_QTY_PRESET[p.code] || 0;
+    const ecBq  = p.ec_box_qty || bq;
+    const withBoxes = (val, useEcBq) => {
+      if (!val) return '<span class="muted">–</span>';
+      const useBq = useEcBq ? ecBq : bq;
+      const boxesTxt = useBq ? `<span class="muted" style="font-size:10px;margin-left:3px">(${Math.floor(val/useBq)}箱)</span>` : '';
+      return fmt(val) + boxesTxt;
+    };
     return `<tr>
       <td data-th="品牌">${tag(p.brand)}</td>
       <td class="bold" data-th="品番">${p.code}</td>
       <td class="num" data-th="累計生產">${fmt(prod)}</td>
-      <td class="num" data-th="VT百貨" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="WEB" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="EC" style="color:#9b7de8">${a.ec  ? fmt(a.ec)  : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="買取" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="VT百貨" style="color:#e05c6a">${withBoxes(a.vt)}</td>
+      <td class="num" data-th="EC" style="color:#9b7de8">${withBoxes(a.ec, true)}</td>
+      <td class="num" data-th="WEB" style="color:#5b8ee0">${withBoxes(a.web)}</td>
+      <td class="num" data-th="買取" style="color:#4ec994">${withBoxes(a.buy)}</td>
       <td class="num" data-th="已配分">${fmt(alloc)}</td>
       <td class="num" data-th="未配分" style="${uaStyle}">${dot} ${ua >= 0 ? fmt(ua) : '超出 '+fmt(-ua)}</td>
       <td class="num muted" data-th="配分率">${rate}</td>
@@ -1201,19 +1215,23 @@ function openAlloc(pid) {
   document.getElementById('ma-max').textContent   = p.max ? fmt(p.max) : '–';
 
   // 通路
+  const ecBq = p.ec_box_qty || p.box_qty || BOX_QTY_PRESET[p.code] || 0;
+  const generalBq = p.box_qty || BOX_QTY_PRESET[p.code] || 0;
   const channels = [
-    { key:'vt',  label:'VT 百貨',  color:'#e05c6a', target: p.vt_target||0 },
-    { key:'web', label:'WEB',     color:'#5b8ee0', target: p.web_target||0 },
-    { key:'ec',  label:'EC',      color:'#9b7de8', target: p.ec_target||0 },
-    { key:'buy', label:'買取',    color:'#4ec994', target: p.buy_target||0 },
+    { key:'vt',  label:'VT 百貨',  color:'#e05c6a', target: p.vt_target||0,  bq: generalBq },
+    { key:'ec',  label:'EC',      color:'#9b7de8', target: p.ec_target||0,  bq: ecBq },
+    { key:'web', label:'WEB',     color:'#5b8ee0', target: p.web_target||0, bq: generalBq },
+    { key:'buy', label:'買取',    color:'#4ec994', target: p.buy_target||0, bq: generalBq },
   ];
 
   document.getElementById('ma-channels').innerHTML = channels.map(ch => {
     const val = a[ch.key] || 0;
+    const boxHint = ch.bq ? `<span class="muted" style="font-size:10px;font-weight:400">${ch.bq}個/箱</span>` : '';
     return `<div class="channel-row">
       <div class="ch-name">
         <div class="ch-dot" style="background:${ch.color}"></div>
         ${ch.label}
+        ${boxHint}
         ${ch.target ? `<span class="muted" style="font-size:10px;font-weight:400">目標 ${fmt(ch.target)}</span>` : ''}
       </div>
       <div class="ch-pb">${pb(val, prod, ch.color)}</div>
@@ -1295,7 +1313,7 @@ function renderProducts() {
       <td class="num" data-th="累計生產" style="color:${clr}">${fmt(prod)}</td>
       <td data-th="進捗" style="min-width:100px">${p.max ? pb(prod, p.max, clr) : ''}</td>
       <td class="num" data-th="進捗率">${p.max ? pct(prod, p.max) : '–'}</td>
-      <td class="num" data-th="入數/箱">${p.box_qty ? '<span style="color:var(--accent);font-weight:700">'+p.box_qty+'</span> 個' : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="入數/箱">${p.box_qty ? '<span style="color:var(--accent);font-weight:700">'+p.box_qty+'</span> 個' : '<span class="muted">–</span>'}${p.ec_box_qty ? ' <span class="muted" style="font-size:10px">/ EC:'+p.ec_box_qty+'</span>' : ''}</td>
       <td class="num muted" data-th="稅含價格">${p.price ? '¥'+fmt(p.price) : '–'}</td>
       <td><button class="btn btn-ghost btn-sm" onclick="openEditProduct('${p.id}')">編輯</button></td>
     </tr>`;
@@ -1313,6 +1331,8 @@ function openAddProduct() {
   document.getElementById('mp-web').value   = '';
   document.getElementById('mp-ec').value    = '';
   document.getElementById('mp-buy').value   = '';
+  document.getElementById('mp-boxqty').value   = '';
+  document.getElementById('mp-ecboxqty').value = '';
   document.getElementById('mp-del-btn').style.display = 'none';
   openModal('m-product');
 }
@@ -1327,6 +1347,7 @@ function openEditProduct(id) {
   document.getElementById('mp-max').value      = p.max   || '';
   document.getElementById('mp-price').value    = p.price || '';
   document.getElementById('mp-boxqty').value   = p.box_qty  || '';
+  document.getElementById('mp-ecboxqty').value = p.ec_box_qty || '';
   document.getElementById('mp-vt').value       = p.vt_target  || '';
   document.getElementById('mp-web').value      = p.web_target || '';
   document.getElementById('mp-ec').value       = p.ec_target  || '';
@@ -1350,6 +1371,7 @@ function saveProduct() {
     ec_target:  parseInt(document.getElementById('mp-ec').value)    || 0,
     buy_target: parseInt(document.getElementById('mp-buy').value)   || 0,
     box_qty:    parseInt(document.getElementById('mp-boxqty').value) || BOX_QTY_PRESET[code] || 0,
+    ec_box_qty: parseInt(document.getElementById('mp-ecboxqty').value) || 0,
   };
   if(editId) {
     const idx = products.findIndex(p => p.id === editId);
@@ -1435,13 +1457,21 @@ function renderDash() {
     const alloc = totalAllocated(p.id);
     const ua    = prod - alloc;
     const uaStyle = ua > 0 ? 'color:var(--red);font-weight:700' : ua <= 0 ? 'color:var(--green)' : '';
+    const bq    = p.box_qty || BOX_QTY_PRESET[p.code] || 0;
+    const ecBq  = p.ec_box_qty || bq;
+    const withBoxes = (val, useEcBq) => {
+      if (!val) return '<span class="muted">–</span>';
+      const useBq = useEcBq ? ecBq : bq;
+      const boxesTxt = useBq ? `<span class="muted" style="font-size:10px;margin-left:3px">(${Math.floor(val/useBq)}箱)</span>` : '';
+      return fmt(val) + boxesTxt;
+    };
     return `<tr>
       <td data-th="品牌">${tag(p.brand)}</td><td class="bold" data-th="品番">${p.code}</td>
       <td class="num" data-th="累計生產">${fmt(prod)}</td>
-      <td class="num" data-th="VT百貨" style="color:#e05c6a">${a.vt ? fmt(a.vt) : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="WEB" style="color:#5b8ee0">${a.web ? fmt(a.web) : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="EC" style="color:#9b7de8">${a.ec ? fmt(a.ec) : '<span class="muted">–</span>'}</td>
-      <td class="num" data-th="買取" style="color:#4ec994">${a.buy ? fmt(a.buy) : '<span class="muted">–</span>'}</td>
+      <td class="num" data-th="VT百貨" style="color:#e05c6a">${withBoxes(a.vt)}</td>
+      <td class="num" data-th="EC" style="color:#9b7de8">${withBoxes(a.ec, true)}</td>
+      <td class="num" data-th="WEB" style="color:#5b8ee0">${withBoxes(a.web)}</td>
+      <td class="num" data-th="買取" style="color:#4ec994">${withBoxes(a.buy)}</td>
       <td class="num" data-th="未配分" style="${uaStyle}">${ua>0?fmt(ua):(ua===0?'✓ 完成':'超出'+fmt(-ua))}</td>
       <td><button class="btn-alloc" onclick="openAlloc('${p.id}');switchTab('alloc')">配分</button></td>
     </tr>`;
@@ -1625,11 +1655,15 @@ async function runDaskaSync() {
         const hasAlloc   = allocData.vt || allocData.web || allocData.ec || allocData.buy;
 
         if (hasAlloc) {
+          const ecBq2 = prod2?.ec_box_qty || bq2;
           for (const [chKey, chLabel] of Object.entries(CH_MAP)) {
-            const chBoxes = allocData[chKey] || 0;
-            if (chBoxes > 0) {
+            const chQty = allocData[chKey] || 0;
+            if (chQty > 0) {
+              const useBq    = chKey === 'ec' ? ecBq2 : bq2;
+              const chBoxes  = useBq > 1 ? Math.floor(chQty / useBq) : chQty;
+              const chLoose  = useBq > 1 ? chQty % useBq : 0;
               // update 用相對路徑（從 distHistory 開始）
-              batchPayload[`${dateKey}/${e.product}/${chLabel}`] = { boxes: chBoxes, loose: 0 };
+              batchPayload[`${dateKey}/${e.product}/${chLabel}`] = { boxes: chBoxes, loose: chLoose };
             }
           }
         } else {
